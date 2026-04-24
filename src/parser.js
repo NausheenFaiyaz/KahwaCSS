@@ -49,3 +49,21 @@ const staticStyles = {
   "shadow-md": { boxShadow: "0 5px 10px rgba(0,0,0,0.15)" },
   "shadow-lg": { boxShadow: "0 10px 20px rgba(0,0,0,0.2)" },
 };
+
+const defaultConfig = {
+  scale: 4,
+  colors: {
+    red: "#ed3c3c",
+    blue: "#3b82f6",
+    green: "#2cd169",
+    pink :"#ff5d8f",
+    black: "#000",
+    white: "#fff",
+    orange: "#f37649",
+    gray: "#6b7280",
+    yellow: "#ffe566",
+    purple: "#deaaff",
+    cyan :"#67e8f9",
+    brown: "#8d4b28",
+  },
+};

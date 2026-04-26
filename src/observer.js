@@ -1,16 +1,19 @@
 import { applyStyles } from "./applier.js";
+import { getUtilitySelector } from "./parser.js";
 
 let pendingNodes = new Set();
 let rafId = null;
 
 function flush(config) {
+  const selector = getUtilitySelector(config);
+
   pendingNodes.forEach((node) => {
     if (!node || node.nodeType !== 1) return;
 
     applyStyles(node, config);
 
-    if (node.querySelectorAll) {
-      node.querySelectorAll('[class*="kw-"]').forEach((child) => {
+    if (node.querySelectorAll && selector) {
+      node.querySelectorAll(selector).forEach((child) => {
         applyStyles(child, config);
       });
     }
@@ -33,11 +36,10 @@ export function observeDOM(config) {
         mutation.attributeName === "class"
       ) {
         const el = mutation.target;
-
         pendingNodes.add(el);
 
-        if (el.dataset.kwClasses) {
-          delete el.dataset.kwClasses;
+        if (el.dataset.kahwaClasses) {
+          delete el.dataset.kahwaClasses;
         }
       }
     });

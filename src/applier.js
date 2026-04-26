@@ -1,4 +1,4 @@
-import { parseClass } from "./parser.js";
+import { getUtilitySelector, isUtilityClass, parseClass } from "./parser.js";
 
 const SKIP_TAGS = new Set(["SCRIPT", "STYLE", "NOSCRIPT"]);
 
@@ -7,14 +7,14 @@ export function applyStyles(el, config) {
   if (SKIP_TAGS.has(el.tagName)) return;
   if (!el.classList || el.classList.length === 0) return;
 
-  const appliedClasses = el.dataset.kwClasses
-    ? el.dataset.kwClasses.split(" ")
+  const appliedClasses = el.dataset.kahwaClasses
+    ? el.dataset.kahwaClasses.split(" ")
     : [];
 
-  let newApplied = [];
+  const newApplied = [];
 
   el.classList.forEach((cls) => {
-    if (!cls.startsWith("kw-")) return;
+    if (!isUtilityClass(cls, config)) return;
     if (appliedClasses.includes(cls)) return;
 
     const styles = parseClass(cls, config);
@@ -26,15 +26,17 @@ export function applyStyles(el, config) {
   });
 
   if (newApplied.length > 0) {
-    el.dataset.kwClasses = [...appliedClasses, ...newApplied].join(" ");
+    el.dataset.kahwaClasses = [...appliedClasses, ...newApplied].join(" ");
   }
 }
 
 export function scanDOM(root = document.body, config) {
   if (!root) return;
 
-  const elements = root.querySelectorAll('[class*="kw-"]');
+  const selector = getUtilitySelector(config);
+  if (!selector) return;
 
+  const elements = root.querySelectorAll(selector);
   elements.forEach((el) => applyStyles(el, config));
 
   applyStyles(root, config);

@@ -1,13 +1,42 @@
 {
   "name": "kahwacss",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "KahwaCSS is a lightweight utility-first CSS engine powered by kw-* classes and JavaScript.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs"
+  "unpkg": "./dist/kahwacss.cdn.min.js",
+  "jsdelivr": "./dist/kahwacss.cdn.min.js",
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "clean": "node -e \"import('node:fs/promises').then(fs=>fs.rm('dist',{recursive:true,force:true}))\"",
+    "build:esm": "esbuild src/index.js --bundle --format=esm --outfile=dist/index.js",
+    "build:cdn": "esbuild src/cdn.js --bundle --format=iife --global-name=KahwaCSS --outfile=dist/kahwacss.cdn.js && esbuild src/cdn.js --bundle --format=iife --global-name=KahwaCSS --minify --outfile=dist/kahwacss.cdn.min.js",
+    "build": "npm run clean && npm run build:esm && npm run build:cdn",
+    "test": "node test/run-tests.js",
+    "prepublishOnly": "npm run test && npm run build"
+  },
+  "keywords": [
+    "css",
+    "utility-css",
+    "tailwind-like",
+    "dom",
+    "javascript"
+  ],
+  "author": "Nausheen Faiyaz",
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.25.4"
+  }
 }

@@ -489,7 +489,7 @@ export function parseClass(cls, config = defaultConfig) {
     return { borderColor: readColor(normalizedConfig.colors, match[1]) };
   }
 
-  match = raw.match(/^(border|border-t|border-b|border-l|border-r)-(.+)$/);
+  match = raw.match(/^(border(?:-[tblr])?)-(.+)$/);
   if (match) {
     const side = match[1];
     const token = match[2];

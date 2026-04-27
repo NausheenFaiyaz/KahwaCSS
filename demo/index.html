@@ -11,23 +11,194 @@
 
       initKahwaCSS();
 
-      const defaultClasses =
-        "kw-bg-[#fff0c8] kw-p-6 kw-rounded-2xl kw-shadow-md kw-text-center kw-border-1 kw-border-color-black";
+      const defaultMarkup = `<div class="kw-bg-[#b7cadf] kw-p-6 kw-rounded-2xl kw-shadow-md kw-text-center kw-border-1 kw-border-color-black">
+  <h3 class="kw-text-xl kw-bold kw-mb-2">Hello, Kahwa</h3>
+  <p class="kw-text-sm">Edit HTML and classes to see live changes.</p>
+</div>`;
+      const classPalette = [
+        "kw-p-4",
+        "kw-p-6",
+        "kw-px-6",
+        "kw-py-3",
+        "kw-rounded-xl",
+        "kw-rounded-2xl",
+        "kw-rounded-full",
+        "kw-text-center",
+        "kw-text-left",
+        "kw-bold",
+        "kw-bg-[#fff0c8]",
+        "kw-bg-[#ecd9ff]",
+        "kw-bg-[#cbf4f0]",
+        "kw-bg-white",
+        "kw-text-black",
+        "kw-text-white",
+        "kw-border-1",
+        "kw-border-color-black",
+        "kw-shadow-sm",
+        "kw-shadow-md",
+      ];
+
+      function escapeHtml(value) {
+        return (value || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      function highlightAttributes(fragment) {
+        return fragment.replace(
+          /([:@a-zA-Z0-9_-]+)(\s*=\s*)("[^"]*"|'[^']*')?/g,
+          (_match, name, equals, quoted) => {
+            if (quoted) {
+              return `<span class="tok-attr">${name}</span>${equals}<span class="tok-string">${quoted}</span>`;
+            }
+            return `<span class="tok-attr">${name}</span>`;
+          },
+        );
+      }
+
+      function getHighlightedMarkup(raw) {
+        const escaped = escapeHtml(raw || " ");
+        const withComments = escaped.replace(
+          /(&lt;!--[\s\S]*?--&gt;)/g,
+          '<span class="tok-comment">$1</span>',
+        );
+
+        return withComments.replace(
+          /(&lt;\/?)([a-zA-Z][\w:-]*)([\s\S]*?)(\/?&gt;)/g,
+          (_match, open, tag, attrs, close) =>
+            `${open}<span class="tok-tag">${tag}</span>${highlightAttributes(attrs)}${close}`,
+        );
+      }
+
+      function initCodeEditors() {
+        const editors = Array.from(document.querySelectorAll("textarea.play-editor"));
+        const refreshers = [];
+
+        editors.forEach((textarea) => {
+          if (textarea.dataset.syntaxEnhanced === "true") return;
+          textarea.dataset.syntaxEnhanced = "true";
+          textarea.setAttribute("spellcheck", "false");
+
+          const wrapper = document.createElement("div");
+          wrapper.className = "kw-code-editor";
+          const pre = document.createElement("pre");
+          pre.className = "kw-code-highlight";
+          const code = document.createElement("code");
+          pre.appendChild(code);
+
+          const parent = textarea.parentNode;
+          parent.insertBefore(wrapper, textarea);
+          wrapper.appendChild(pre);
+          wrapper.appendChild(textarea);
+
+          const sync = () => {
+            code.innerHTML = getHighlightedMarkup(textarea.value || " ");
+            pre.scrollTop = textarea.scrollTop;
+            pre.scrollLeft = textarea.scrollLeft;
+          };
+
+          textarea.addEventListener("input", sync);
+          textarea.addEventListener("scroll", sync, { passive: true });
+          sync();
+          refreshers.push(sync);
+        });
+
+        window.refreshCodeEditors = () => {
+          refreshers.forEach((refresh) => refresh());
+        };
+      }
+
+      function tokenizeClasses(value) {
+        return Array.from(
+          new Set(
+            (value || "")
+              .split(/\s+/)
+              .map((token) => token.trim())
+              .filter(Boolean),
+          ),
+        );
+      }
+
+      function getTemplateFromMarkup(markup) {
+        const template = document.createElement("template");
+        template.innerHTML = (markup || "").trim();
+        return template;
+      }
+
+      function getPrimaryElement(template) {
+        return template.content.firstElementChild;
+      }
+
+      function getPrimaryClasses(markup) {
+        const template = getTemplateFromMarkup(markup);
+        const primary = getPrimaryElement(template);
+        if (!primary) return [];
+        return tokenizeClasses(primary.getAttribute("class") || "");
+      }
 
       function updatePreview() {
-        const input = document.getElementById("classInput");
-        const content = document.getElementById("contentInput");
+        const editor = document.getElementById("classEditor");
         const preview = document.getElementById("previewBox");
         const mirror = document.getElementById("classMirror");
+        const chips = document.querySelectorAll(".class-chip");
 
-        const value = (input.value || "").trim();
-        const classValue = value.length > 0 ? value : defaultClasses;
+        const rawMarkup = (editor.value || "").trim();
+        const markup = rawMarkup || defaultMarkup;
+        const primaryClasses = getPrimaryClasses(markup);
 
-        preview.removeAttribute("style");
-        delete preview.dataset.kahwaClasses;
-        preview.className = `playground-preview ${classValue}`;
-        preview.textContent = content.value || "KahwaCSS preview";
-        mirror.textContent = classValue;
+        preview.innerHTML = markup;
+        mirror.textContent = primaryClasses.length
+          ? primaryClasses.join(" ")
+          : "(No classes on root element)";
+
+        const selected = new Set(primaryClasses);
+        chips.forEach((chip) => {
+          const utility = chip.dataset.classToken;
+          chip.classList.toggle("is-active", selected.has(utility));
+        });
+      }
+
+      function initClassPalette() {
+        const paletteWrap = document.getElementById("classButtons");
+        const editor = document.getElementById("classEditor");
+        if (!paletteWrap || !editor) return;
+
+        paletteWrap.innerHTML = classPalette
+          .map(
+            (token) =>
+              `<button type="button" class="class-chip" data-class-token="${token}">${token}</button>`,
+          )
+          .join("");
+
+        paletteWrap.querySelectorAll(".class-chip").forEach((chip) => {
+          chip.addEventListener("click", () => {
+            const token = chip.dataset.classToken;
+            const currentMarkup = (editor.value || "").trim() || defaultMarkup;
+            const template = getTemplateFromMarkup(currentMarkup);
+            let primary = getPrimaryElement(template);
+
+            if (!primary) {
+              template.innerHTML = defaultMarkup;
+              primary = getPrimaryElement(template);
+            }
+
+            const current = tokenizeClasses(
+              primary.getAttribute("class") || "",
+            );
+            const index = current.indexOf(token);
+
+            if (index >= 0) current.splice(index, 1);
+            else current.push(token);
+
+            if (current.length)
+              primary.setAttribute("class", current.join(" "));
+            else primary.removeAttribute("class");
+
+            editor.value = template.innerHTML.trim();
+            updatePreview();
+          });
+        });
       }
 
       function initReveal() {
@@ -48,22 +219,105 @@
           .forEach((el) => observer.observe(el));
       }
 
+      function initResponsiveNav() {
+        const header = document.querySelector(".top-shell");
+        const toggle = document.getElementById("navToggle");
+        const menu = document.getElementById("mobileMenu");
+        if (!header || !toggle || !menu) return;
+
+        let lastY = window.scrollY;
+        let ticking = false;
+
+        const setOffset = () => {
+          document.documentElement.style.setProperty(
+            "--nav-offset",
+            "0px",
+          );
+        };
+
+        const closeMenu = () => {
+          toggle.setAttribute("aria-expanded", "false");
+          toggle.setAttribute("aria-label", "Open menu");
+          menu.hidden = true;
+          header.classList.remove("menu-open");
+        };
+
+        const openMenu = () => {
+          toggle.setAttribute("aria-expanded", "true");
+          toggle.setAttribute("aria-label", "Close menu");
+          menu.hidden = false;
+          header.classList.add("menu-open");
+        };
+
+        toggle.addEventListener("click", () => {
+          const expanded = toggle.getAttribute("aria-expanded") === "true";
+          if (expanded) {
+            closeMenu();
+          } else {
+            openMenu();
+          }
+          setOffset();
+        });
+
+        menu.querySelectorAll("a").forEach((link) => {
+          link.addEventListener("click", () => {
+            closeMenu();
+            setOffset();
+          });
+        });
+
+        window.addEventListener("resize", () => {
+          if (window.innerWidth > 980) {
+            closeMenu();
+          }
+          setOffset();
+        });
+
+        window.addEventListener(
+          "scroll",
+          () => {
+            if (ticking) return;
+            ticking = true;
+
+            window.requestAnimationFrame(() => {
+              const currentY = window.scrollY;
+              const delta = currentY - lastY;
+
+              if (currentY < 24 || header.classList.contains("menu-open")) {
+                header.classList.remove("nav-hidden");
+              } else if (delta > 8) {
+                header.classList.add("nav-hidden");
+              } else if (delta < -8) {
+                header.classList.remove("nav-hidden");
+              }
+
+              lastY = currentY;
+              ticking = false;
+            });
+          },
+          { passive: true },
+        );
+
+        setOffset();
+      }
+
       window.addEventListener("DOMContentLoaded", () => {
-        const classInput = document.getElementById("classInput");
-        const contentInput = document.getElementById("contentInput");
+        const classInput = document.getElementById("classEditor");
         const resetButton = document.getElementById("resetPlayground");
 
-        classInput.value = defaultClasses;
+        initClassPalette();
+        classInput.value = defaultMarkup;
         updatePreview();
         initReveal();
+        initResponsiveNav();
+        initCodeEditors();
 
         classInput.addEventListener("input", updatePreview);
-        contentInput.addEventListener("input", updatePreview);
 
         resetButton.addEventListener("click", () => {
-          classInput.value = defaultClasses;
-          contentInput.value = "KahwaCSS preview";
+          classInput.value = defaultMarkup;
           updatePreview();
+          window.refreshCodeEditors?.();
         });
       });
     </script>
@@ -73,33 +327,51 @@
     <header class="kw-sticky kw-top-0 kw-z-50 top-shell">
       <div class="nav-wrap site-shell">
         <nav
-          class="hero-nav kw-bg-[#fffdf7] kw-border-1 kw-border-color-black kw-rounded-xl kw-py-0 kw-flex kw-items-center kw-justify-between"
+          class="hero-nav kw-bg-[#fffefb] kw-border-1 kw-border-color-black kw-rounded-xl kw-py-0 kw-flex kw-items-center kw-justify-between"
           data-reveal
         >
-          <a href="./index.html" class="brand-block">kahwaCSS</a>
+          <a href="./index.html" class="brand-block">KahwaCSS</a>
+
+          <button
+            id="navToggle"
+            class="nav-toggle"
+            type="button"
+            aria-label="Open menu"
+            aria-controls="mobileMenu"
+            aria-expanded="false"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
 
           <div class="nav-links kw-flex kw-gap-6 kw-text-sm">
             <a href="#features">Features</a>
             <a href="#how-it-works">How it Works</a>
-            <a href="#demo">Components</a>
+            <a href="./components.html">Components</a>
             <a href="#playground">Playground</a>
           </div>
 
           <div class="nav-right kw-flex kw-items-center kw-gap-3">
-            <a class="join-btn" href="./docs.html">Docs</a>
+            <a class="docs-btn" href="./docs.html">DOCS</a>
           </div>
         </nav>
+
+        <div id="mobileMenu" class="mobile-menu" hidden>
+          <a href="#features">Features</a>
+          <a href="#how-it-works">How it Works</a>
+          <a href="./components.html">Components</a>
+          <a href="#playground">Playground</a>
+          <a href="./docs.html">Docs</a>
+        </div>
       </div>
     </header>
 
     <main class="site-shell">
-      <section
-        class="hero panel hero-ref kw-border-1 kw-border-color-black kw-rounded-2xl kw-p-[36px] kw-mb-4"
-        data-reveal
-      >
+      <section class="hero panel hero-ref kw-p-[36px] kw-mb-4" data-reveal>
         <div class="sticker code-mark">&lt;/&gt;</div>
-        <div class="sticker fn-tag">function()</div>
-        <div class="sticker upload-tag">upload</div>
+        <div class="sticker fn-tag">initKahwaCSS()</div>
+        <div class="sticker upload-tag">Ship Fast</div>
 
         <h1 class="hero-title hero-ref-title kw-text-center">
           <span class="highlight">Build beautiful interfaces faster</span>
@@ -107,7 +379,7 @@
           <span>kw utility components</span>
         </h1>
 
-        <p class="floating-pill">Floating element</p>
+        <p class="floating-pill">Runtime Style Orchestrator</p>
 
         <div class="kw-text-center kw-mt-4">
           <a href="#playground" class="cta-btn">Get Started</a>
@@ -116,16 +388,12 @@
 
       <div class="ticker kw-mb-4" data-reveal>
         <div class="ticker-track">
-          kw-p-4 � kw-bg-blue � kw-text-center � kw-grid-cols-3 � kw-rounded-2xl
-          � kw-shadow-md � kw-w-1/2 � kw-border-color-red
+          kw-p-4 | kw-bg-blue | kw-text-center | kw-grid-cols-3 | kw-rounded-2xl
+          | kw-shadow-md | kw-w-1/2 | kw-border-color-red
         </div>
       </div>
 
-      <section
-        id="features"
-        class="panel kw-mb-6 kw-p-5 kw-border-1 kw-border-color-black kw-rounded-2xl"
-        data-reveal
-      >
+      <section id="features" class="panel kw-mb-6 kw-p-5" data-reveal>
         <h2 class="section-title kw-mb-3">Features</h2>
         <div class="kw-grid kw-grid-cols-3 kw-gap-3 feature-grid">
           <article
@@ -158,11 +426,7 @@
         </div>
       </section>
 
-      <section
-        id="how-it-works"
-        class="panel kw-mb-6 kw-border-1 kw-border-color-black kw-rounded-2xl kw-p-5"
-        data-reveal
-      >
+      <section id="how-it-works" class="panel kw-mb-6 kw-p-5" data-reveal>
         <h2 class="section-title kw-mb-3">How It Works</h2>
         <ol class="steps">
           <li>
@@ -180,158 +444,115 @@
         </ol>
       </section>
 
-      <section
-        id="demo"
-        class="panel kw-mb-6 kw-p-5 kw-border-1 kw-border-color-black kw-rounded-2xl"
-        data-reveal
-      >
-        <h2 class="section-title kw-mb-3">Demo Components</h2>
-
-        <div class="kw-mb-4">
-          <h3 class="kw-text-xl kw-bold kw-mb-2">Button Collection</h3>
-          <div class="kw-flex kw-gap-3 kw-flex-wrap">
-            <button
-              class="kw-bg-blue kw-text-white kw-px-4 kw-py-2 kw-rounded-full kw-border-1 kw-border-color-black"
-            >
-              Primary
-            </button>
-            <button
-              class="kw-bg-[#ffe88f] kw-text-black kw-px-4 kw-py-2 kw-rounded-full kw-border-1 kw-border-color-black"
-            >
-              Soft Accent
-            </button>
-            <button
-              class="kw-bg-white kw-text-black kw-px-4 kw-py-2 kw-rounded-full kw-border-1 kw-border-color-black kw-shadow-sm"
-            >
-              Outline
-            </button>
-            <button
-              class="kw-bg-[#111111] kw-text-white kw-px-4 kw-py-2 kw-rounded-full kw-border-1 kw-border-color-black"
-            >
-              Dark
-            </button>
-            <button
-              class="kw-bg-[#ffcedd] kw-text-black kw-px-4 kw-py-2 kw-rounded-full kw-border-1 kw-border-color-black"
-            >
-              Candy
-            </button>
-          </div>
-        </div>
-
-        <div class="kw-grid kw-grid-cols-3 kw-gap-3 demo-grid">
-          <article
-            class="kw-bg-[#fff0c8] kw-p-4 kw-rounded-2xl kw-border-1 kw-border-color-black kw-shadow-md"
-          >
-            <p class="kw-text-sm kw-mb-2">Beautiful Card</p>
-            <h3 class="kw-text-xl kw-bold kw-mb-2">Strategy Sprint</h3>
-            <p class="kw-mb-3">
-              A playful card using spacing, border, radius, shadow, and color
-              utilities.
-            </p>
-            <a
-              href="./docs.html"
-              class="kw-bg-white kw-border-1 kw-border-color-black kw-rounded-full kw-px-3 kw-py-1"
-              >Read Docs</a
-            >
-          </article>
-
-          <article
-            class="kw-bg-[#ecd9ff] kw-p-4 kw-rounded-2xl kw-border-1 kw-border-color-black kw-shadow-md"
-          >
-            <p class="kw-text-sm kw-mb-2">Layout Pattern</p>
-            <h3 class="kw-text-xl kw-bold kw-mb-2">Nested Grid</h3>
-            <div class="kw-grid kw-grid-cols-2 kw-gap-2 kw-mb-2">
-              <div
-                class="kw-bg-white kw-p-2 kw-rounded kw-border-1 kw-border-color-black"
-              >
-                A
-              </div>
-              <div
-                class="kw-bg-white kw-p-2 kw-rounded kw-border-1 kw-border-color-black"
-              >
-                B
-              </div>
-              <div
-                class="kw-bg-white kw-p-2 kw-rounded kw-border-1 kw-border-color-black"
-              >
-                C
-              </div>
-              <div
-                class="kw-bg-white kw-p-2 kw-rounded kw-border-1 kw-border-color-black"
-              >
-                D
-              </div>
-            </div>
-            <p class="kw-text-sm">
-              Built entirely with <code>kw-grid</code> and spacing utilities.
-            </p>
-          </article>
-
-          <article
-            class="kw-bg-[#cbf4f0] kw-p-4 kw-rounded-2xl kw-border-1 kw-border-color-black kw-shadow-md"
-          >
-            <p class="kw-text-sm kw-mb-2">Hero Snippet</p>
-            <h3 class="kw-text-xl kw-bold kw-mb-2">Marketing Banner</h3>
-            <div
-              class="kw-bg-white kw-p-3 kw-rounded-xl kw-border-1 kw-border-color-black kw-text-center"
-            >
-              <p class="kw-text-lg kw-bold">kw-bg + kw-text + kw-rounded</p>
-              <p class="kw-text-sm">
-                Compose tiny utilities into polished UI blocks.
-              </p>
-            </div>
-          </article>
-        </div>
-      </section>
+     
 
       <section
         id="playground"
-        class="kw-mb-6 kw-bg-[#111111] kw-text-white kw-border-1 kw-border-color-black kw-rounded-2xl kw-p-6 roomy playground-section"
+        class="kw-mb-6 kw-bg-[#111111] kw-text-white kw-p-6 roomy playground-section"
         data-reveal
       >
         <h2 class="section-title section-title-dark kw-mb-3">Playground</h2>
         <p class="kw-text-gray kw-mb-3">
-          Type any <code>kw-</code> classes and preview in real-time.
+          Type your <code>kw-</code> classes or click class chips to style the
+          live component.
         </p>
 
-        <div class="kw-grid kw-grid-cols-2 kw-gap-4 playground-grid">
-          <div>
-            <label class="kw-text-sm" for="classInput">Class string</label>
-            <textarea
-              id="classInput"
-              class="play-input"
-              rows="4"
-              placeholder="kw-bg-blue kw-p-6 kw-rounded-xl kw-text-white"
-            ></textarea>
+        <div class="playground-lab">
+          <article class="play-panel">
+            <div class="play-panel-head">
+              <div class="panel-dots" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <p>Editor</p>
+            </div>
+            <div class="play-panel-body">
+              <label class="kw-text-sm kw-text-[#141414] kw-fw-600" for="classEditor">Class editor</label>
+              <textarea
+                id="classEditor"
+                class="play-editor"
+                rows="9"
+                placeholder='<div class="kw-p-6 kw-bg-[#fff0c8]">Hello</div>'
+              ></textarea>
+              <p class="editor-note kw-text-[#fff]">
+                Write full HTML here (tags + text + classes). Chips apply to the
+                root element.
+              </p>
+              <p class="kw-text-sm kw-mt-3">Root element classes</p>
+              <pre class="mirror"><code id="classMirror"></code></pre>
+            </div>
+          </article>
 
-            <label class="kw-text-sm kw-mt-3" for="contentInput"
-              >Preview text</label
-            >
-            <input
-              id="contentInput"
-              class="play-input"
-              value="KahwaCSS preview"
-            />
+          <article class="play-panel">
+            <div class="play-panel-head">
+              <div class="panel-dots" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <p>Preview</p>
+            </div>
+            <div class="play-panel-body preview-panel-body">
+              <div id="previewBox" class="playground-preview"></div>
+            </div>
+          </article>
+        </div>
 
+        <div class="class-palette-wrap kw-mt-4">
+          <div id="classButtons" class="class-palette"></div>
+
+          <div class="kw-mt-3">
             <button
               id="resetPlayground"
               type="button"
-              class="kw-mt-3 kw-bg-[#ffe88f] kw-text-black kw-px-3 kw-py-2 kw-rounded-full kw-border-1 kw-border-color-black"
+              class="kw-bg-[#ffe88f] kw-text-black kw-px-3 kw-py-2 kw-rounded-full kw-border-1 kw-border-color-black"
             >
-              Reset
+              Reset Classes
             </button>
-
-            <p class="kw-text-sm kw-mt-3">Current classes:</p>
-            <pre class="mirror"><code id="classMirror"></code></pre>
-          </div>
-
-          <div class="preview-wrap">
-            <div id="previewBox" class="playground-preview">
-              KahwaCSS preview
-            </div>
           </div>
         </div>
       </section>
     </main>
+
+    <footer class="site-footer">
+      <div class="footer-shell">
+        <div class="footer-about">
+          <a href="./index.html" class="footer-brand">
+            <span class="footer-mark">&lt;/&gt;</span>
+            <span>KahwaCSS</span>
+          </a>
+          <p>
+            A proof-of-concept utility-class engine by
+            <a href="https://nausheenportfolio.vercel.app/">Nausheen Faiyaz</a>. Built to prove runtime inline
+            injection is viable.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <p class="footer-title">Pages</p>
+          <a href="./docs.html">Documentation</a>
+          <a href="./components.html">Components</a>
+          <a href="./index.html#playground">Playground</a>
+        </div>
+
+        <div class="footer-col">
+          <p class="footer-title">Package</p>
+          <a href="https://www.npmjs.com/package/kahwacss" target="_blank" rel="noreferrer">npm</a>
+          <a href="https://cdn.jsdelivr.net/npm/kahwacss@latest/dist/kahwacss.cdn.min.js" target="_blank" rel="noreferrer">jsDelivr CDN</a>
+        </div>
+
+        <div class="footer-col">
+          <p class="footer-title">Source</p>
+          <a href="https://github.com/NausheenFaiyaz/KahwaCSS" target="_blank" rel="noreferrer">GitHub</a>
+        </div>
+      </div>
+
+      <div class="footer-meta">
+        <span>MIT License</span>
+        <span>v1.0.0</span>
+        <span>KahwaCSS</span>
+      </div>
+    </footer>
   </body>
 </html>

@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KahwaCSS | Documentation</title>
+    <link rel="stylesheet" href="./styles.css" />
+
+    <script type="module">
+      import { initKahwaCSS } from "../src/index.js";
+
+      initKahwaCSS();
+
+      function initReveal() {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible");
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.14 },
+        );
+
+        document
+          .querySelectorAll("[data-reveal]")
+          .forEach((el) => observer.observe(el));
+      }
+
+      window.addEventListener("DOMContentLoaded", initReveal);
+    </script>
+  </head>
+
+  <body class="kw-bg-[#fffdf7] kw-text-black docs-page">
+    <header class="kw-sticky kw-top-0 kw-z-50 top-shell">
+      <div class="nav-wrap site-shell">
+        <nav
+          class="hero-nav kw-bg-[#fffdf7] kw-border-1 kw-border-color-black kw-rounded-xl kw-py-0 kw-flex kw-items-center kw-justify-between"
+          data-reveal
+        >
+          <a href="./index.html" class="brand-block">KahwaCSS</a>
+
+          <div class="nav-links kw-flex kw-gap-6 kw-text-sm">
+            <a href="./index.html">About</a>
+            <a href="#installation">Install</a>
+            <a href="#utilities">Utilities</a>
+          </div>
+
+          <div class="nav-right kw-flex kw-items-center kw-gap-3">
+            <a class="join-btn" href="./index.html#playground"
+              >Try Playground</a
+            >
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="site-shell docs-main">
+      <section
+        id="installation"
+        class="panel kw-border-1 kw-border-color-black kw-rounded-2xl kw-p-6 kw-mb-5"
+        data-reveal
+      >
+        <h1 class="section-title kw-mb-3">KahwaCSS Docs</h1>
+        <p class="kw-mb-3">
+          KahwaCSS is a lightweight JavaScript utility engine. You write
+          <code>kw-*</code> classes in HTML; KahwaCSS parses and applies inline
+          styles.
+        </p>
+
+        <h2 class="kw-text-2xl kw-bold kw-mb-2">Installation</h2>
+        <pre><code>npm i kahwacss</code></pre>
+
+        <h2 class="kw-text-2xl kw-bold kw-mb-2 kw-mt-4">Initialize</h2>
+        <pre><code>import { initKahwaCSS } from "kahwacss";
+
+initKahwaCSS();</code></pre>
+
+        <h2 class="kw-text-2xl kw-bold kw-mb-2 kw-mt-4">CDN</h2>
+        <pre><code>&lt;script src="https://cdn.jsdelivr.net/npm/kahwacss@latest/dist/kahwacss.cdn.min.js"&gt;&lt;/script&gt;
+&lt;script&gt;window.KahwaCSS.init();&lt;/script&gt;</code></pre>
+      </section>
+
+      <section
+        id="how"
+        class="panel kw-border-1 kw-border-color-black kw-rounded-2xl kw-p-6 kw-mb-5"
+        data-reveal
+      >
+        <h2 class="section-title kw-mb-3">How The Library Works</h2>
+        <ol class="steps">
+          <li>
+            <span>1.</span> The engine scans the DOM for classes starting with
+            <code>kw-</code>.
+          </li>
+          <li>
+            <span>2.</span> Each class is parsed into a style object, for
+            example <code>kw-p-4</code> -> <code>{ padding: "16px" }</code>.
+          </li>
+          <li>
+            <span>3.</span> Styles are attached using inline style assignment.
+          </li>
+          <li>
+            <span>4.</span> A MutationObserver listens for new nodes and class
+            changes and reapplies styles.
+          </li>
+          <li>
+            <span>5.</span> Prefix support is intentionally limited to
+            <code>kw-</code> only.
+          </li>
+        </ol>
+      </section>
+
+      <section
+        id="utilities"
+        class="panel kw-border-1 kw-border-color-black kw-rounded-2xl kw-p-6 kw-mb-5"
+        data-reveal
+      >
+        <h2 class="section-title kw-mb-3">Supported Utility Groups</h2>
+
+        <div class="doc-grid">
+          <article
+            class="doc-card kw-bg-[#fff7dc] kw-border-1 kw-border-color-black kw-rounded-xl kw-p-4"
+          >
+            <h3 class="kw-text-xl kw-bold kw-mb-2">Spacing</h3>
+            <p>
+              <code>kw-p-*</code>, <code>kw-pt-*</code>, <code>kw-px-*</code>,
+              <code>kw-m-*</code>, <code>kw-mx-auto</code>, arbitrary values
+              like <code>kw-m-[12px]</code>.
+            </p>
+          </article>
+
+          <article
+            class="doc-card kw-bg-[#ecf3ff] kw-border-1 kw-border-color-black kw-rounded-xl kw-p-4"
+          >
+            <h3 class="kw-text-xl kw-bold kw-mb-2">Colors and Typography</h3>
+            <p>
+              <code>kw-bg-red</code>, <code>kw-bg-[#111]</code>,
+              <code>kw-text-gray</code>, <code>kw-text-4xl</code>,
+              <code>kw-font-semibold</code>, <code>kw-lh-24</code>.
+            </p>
+          </article>
+
+          <article
+            class="doc-card kw-bg-[#ecffe8] kw-border-1 kw-border-color-black kw-rounded-xl kw-p-4"
+          >
+            <h3 class="kw-text-xl kw-bold kw-mb-2">Sizing</h3>
+            <p>
+              <code>kw-w-full</code>, <code>kw-w-1/2</code>,
+              <code>kw-h-screen</code>, <code>kw-min-w-320</code>,
+              <code>kw-max-h-500</code>.
+            </p>
+          </article>
+
+          <article
+            class="doc-card kw-bg-[#f4ecff] kw-border-1 kw-border-color-black kw-rounded-xl kw-p-4"
+          >
+            <h3 class="kw-text-xl kw-bold kw-mb-2">Layout and Flex/Grid</h3>
+            <p>
+              <code>kw-flex</code>, <code>kw-items-center</code>,
+              <code>kw-justify-between</code>, <code>kw-grid-cols-3</code>,
+              <code>kw-gap-4</code>, <code>kw-grow-1</code>.
+            </p>
+          </article>
+
+          <article
+            class="doc-card kw-bg-[#ffeef1] kw-border-1 kw-border-color-black kw-rounded-xl kw-p-4"
+          >
+            <h3 class="kw-text-xl kw-bold kw-mb-2">Borders and Effects</h3>
+            <p>
+              <code>kw-border-1</code>, <code>kw-border-b-2</code>,
+              <code>kw-border-color-blue</code>, <code>kw-rounded-2xl</code>,
+              <code>kw-shadow-md</code>, <code>kw-opacity-80</code>.
+            </p>
+          </article>
+
+          <article
+            class="doc-card kw-bg-[#e9fbfb] kw-border-1 kw-border-color-black kw-rounded-xl kw-p-4"
+          >
+            <h3 class="kw-text-xl kw-bold kw-mb-2">Interaction and Other</h3>
+            <p>
+              <code>kw-transition</code>, <code>kw-duration-300</code>,
+              <code>kw-pointer-none</code>, <code>kw-object-cover</code>,
+              <code>kw-overflow-hidden</code>, <code>kw-z-50</code>.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section
+        id="patterns"
+        class="panel kw-border-1 kw-border-color-black kw-rounded-2xl kw-p-6 kw-mb-6"
+        data-reveal
+      >
+        <h2 class="section-title kw-mb-3">Key / Value Reference</h2>
+        <p class="kw-mb-3">
+          The table below shows common utility keys and the style values they
+          map to.
+        </p>
+
+        <div class="table-wrap">
+          <table class="docs-table">
+            <thead>
+              <tr>
+                <th>Utility Pattern</th>
+                <th>Style Key</th>
+                <th>Value Rule</th>
+                <th>Example Output</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>kw-p-4</code></td>
+                <td><code>padding</code></td>
+                <td><code>number * scale</code> (default scale = 4)</td>
+                <td><code>padding: 16px</code></td>
+              </tr>
+              <tr>
+                <td><code>kw-mx-auto</code></td>
+                <td><code>marginLeft</code>, <code>marginRight</code></td>
+                <td><code>auto</code></td>
+                <td><code>margin-left/right: auto</code></td>
+              </tr>
+              <tr>
+                <td><code>kw-bg-red</code></td>
+                <td><code>backgroundColor</code></td>
+                <td>theme color token lookup</td>
+                <td><code>#ed3c3c</code></td>
+              </tr>
+              <tr>
+                <td><code>kw-text-3xl</code></td>
+                <td><code>fontSize</code></td>
+                <td>preset text size map</td>
+                <td><code>30px</code></td>
+              </tr>
+              <tr>
+                <td><code>kw-w-1/2</code></td>
+                <td><code>width</code></td>
+                <td>fraction to percent</td>
+                <td><code>50%</code></td>
+              </tr>
+              <tr>
+                <td><code>kw-h-screen</code></td>
+                <td><code>height</code></td>
+                <td>keyword map</td>
+                <td><code>100vh</code></td>
+              </tr>
+              <tr>
+                <td><code>kw-border-b-1</code></td>
+                <td>
+                  <code>borderBottomWidth</code>, <code>borderBottomStyle</code>
+                </td>
+                <td>numeric px width</td>
+                <td><code>1px solid</code></td>
+              </tr>
+              <tr>
+                <td><code>kw-rounded-2xl</code></td>
+                <td><code>borderRadius</code></td>
+                <td>radius map</td>
+                <td><code>24px</code></td>
+              </tr>
+              <tr>
+                <td><code>kw-grid-cols-3</code></td>
+                <td><code>gridTemplateColumns</code></td>
+                <td><code>repeat(n, minmax(0, 1fr))</code></td>
+                <td><code>repeat(3, minmax(0, 1fr))</code></td>
+              </tr>
+              <tr>
+                <td><code>kw-top-2</code></td>
+                <td><code>top</code></td>
+                <td><code>number * scale</code></td>
+                <td><code>8px</code></td>
+              </tr>
+              <tr>
+                <td><code>kw-duration-300</code></td>
+                <td><code>transitionDuration</code></td>
+                <td>milliseconds</td>
+                <td><code>300ms</code></td>
+              </tr>
+              <tr>
+                <td><code>kw-bg-[#ffcc00]</code></td>
+                <td><code>backgroundColor</code></td>
+                <td>arbitrary value between brackets</td>
+                <td><code>#ffcc00</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

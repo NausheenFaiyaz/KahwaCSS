@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>KahwaCSS | Showcase</title>
+    <link rel="icon" type="image/png" href="./kahwaCSS.png" />
     <link rel="stylesheet" href="./styles.css" />
 
     <script type="module">
@@ -11,7 +12,7 @@
 
       initKahwaCSS();
 
-      const defaultMarkup = `<div class="kw-bg-[#b7cadf] kw-p-6 kw-rounded-2xl kw-shadow-md kw-text-center kw-border-1 kw-border-color-black">
+      const defaultMarkup = `<div class="kw-bg-[#fff0c8] kw-text-[#000] kw-p-6 kw-rounded-2xl kw-shadow-md kw-text-center kw-border-1 kw-border-color-black">
   <h3 class="kw-text-xl kw-bold kw-mb-2">Hello, Kahwa</h3>
   <p class="kw-text-sm">Edit HTML and classes to see live changes.</p>
 </div>`;
@@ -26,6 +27,7 @@
         "kw-text-center",
         "kw-text-left",
         "kw-bold",
+        "kw-text-[#000]",
         "kw-bg-[#fff0c8]",
         "kw-bg-[#ecd9ff]",
         "kw-bg-[#cbf4f0]",
@@ -394,52 +396,110 @@
       </div>
 
       <section id="features" class="panel kw-mb-6 kw-p-5" data-reveal>
-        <h2 class="section-title kw-mb-3">Features</h2>
-        <div class="kw-grid kw-grid-cols-3 kw-gap-3 feature-grid">
-          <article
-            class="feature-card kw-bg-[#ffd1de] kw-p-4 kw-rounded-xl kw-border-1 kw-border-color-black"
-          >
-            <h3 class="kw-text-xl kw-bold kw-mb-2">Runtime Styling</h3>
-            <p>
-              Apply styles directly from HTML class tokens without generating a
-              stylesheet.
-            </p>
-          </article>
-          <article
-            class="feature-card kw-bg-[#cfe7ff] kw-p-4 kw-rounded-xl kw-border-1 kw-border-color-black"
-          >
-            <h3 class="kw-text-xl kw-bold kw-mb-2">Mutation Aware</h3>
-            <p>
-              New nodes and class updates are observed, parsed, and styled
-              automatically.
-            </p>
-          </article>
-          <article
-            class="feature-card kw-bg-[#dcf7cf] kw-p-4 kw-rounded-xl kw-border-1 kw-border-color-black"
-          >
-            <h3 class="kw-text-xl kw-bold kw-mb-2">Single Prefix</h3>
-            <p>
-              Strict <code>kw-</code> prefix keeps your utility syntax focused
-              and conflict-free.
-            </p>
-          </article>
+        <div class="features-showcase">
+          <div class="features-head">
+            <h2 class="section-title kw-mb-0">Engine Features</h2>
+          </div>
+
+          <ul class="features-list">
+            <li>Runtime utility parsing from plain HTML classes</li>
+            <li>Zero build step styling with instant inline application</li>
+            <li>MutationObserver sync for new nodes and class updates</li>
+            <li>RequestAnimationFrame batching for efficient re-apply</li>
+            <li>Strict <code>kw-</code> prefix enforcement for clean scope</li>
+            <li>Static + dynamic utility parser architecture</li>
+            <li>Arbitrary value support like <code>kw-w-[320px]</code></li>
+            <li>Fraction syntax support like <code>kw-w-1/2</code></li>
+            <li>Theme color tokens + arbitrary color values</li>
+            <li>Config merge support with safe defaults</li>
+            <li>Applied-class caching via <code>data-kahwa-classes</code></li>
+            <li>Broad utility groups: spacing, layout, typography, grid, flex, borders, effects, transitions</li>
+          </ul>
         </div>
       </section>
 
       <section id="how-it-works" class="panel kw-mb-6 kw-p-5" data-reveal>
         <h2 class="section-title kw-mb-3">How It Works</h2>
-        <ol class="steps">
-          <li>
-            <span>1.</span> KahwaCSS scans elements containing classes starting
-            with <code>kw-</code>.
+        <ol class="engine-steps">
+          <li class="engine-step-item">
+            <div class="engine-step-content">
+              <p class="engine-step-title">
+                1. Boot + DOM Ready Handshake
+              </p>
+              <p class="engine-step-text">
+                <code>initKahwaCSS()</code> waits for DOM readiness, then
+                starts the first scan and observer.
+              </p>
+            </div>
+            
           </li>
-          <li>
-            <span>2.</span> Tokens are parsed into JavaScript style objects
-            using utility rules.
+
+          <li class="engine-step-item">
+            <div class="engine-step-content">
+              <p class="engine-step-title">
+                2. Config Resolution + Prefix Lock
+              </p>
+              <p class="engine-step-text">
+                User config is merged with defaults; the engine intentionally
+                supports only <code>kw-</code> utilities.
+              </p>
+            </div>
+            
           </li>
-          <li>
-            <span>3.</span> Styles are applied inline and re-applied when DOM
-            classes change.
+
+          <li class="engine-step-item">
+            <div class="engine-step-content">
+              <p class="engine-step-title">
+                3. DOM Scan by Utility Selector
+              </p>
+              <p class="engine-step-text">
+                <code>scanDOM()</code> finds matching nodes using
+                <code>[class*="kw-"]</code> and runs style application on each.
+              </p>
+            </div>
+            
+          </li>
+
+          <li class="engine-step-item">
+            <div class="engine-step-content">
+              <p class="engine-step-title">
+                4. Safe Apply + Class Cache
+              </p>
+              <p class="engine-step-text">
+                <code>applyStyles()</code> skips unsafe tags
+                (<code>script/style/noscript</code>) and stores applied tokens
+                in <code>data-kahwa-classes</code> to avoid redundant work.
+              </p>
+            </div>
+            
+          </li>
+
+          <li class="engine-step-item">
+            <div class="engine-step-content">
+              <p class="engine-step-title">
+                5. Token Parsing + Value Resolution
+              </p>
+              <p class="engine-step-text">
+                Tokens are parsed by static maps and regex rules, including
+                spacing scale, fractions, color tokens, and arbitrary bracket
+                values.
+              </p>
+            </div>
+            
+          </li>
+
+          <li class="engine-step-item">
+            <div class="engine-step-content">
+              <p class="engine-step-title">
+                6. Live Mutation Sync
+              </p>
+              <p class="engine-step-text">
+                A <code>MutationObserver</code> watches new nodes and class
+                changes, batches updates with
+                <code>requestAnimationFrame</code>, and reapplies styles.
+              </p>
+            </div>
+            
           </li>
         </ol>
       </section>
@@ -452,7 +512,7 @@
         data-reveal
       >
         <h2 class="section-title section-title-dark kw-mb-3">Playground</h2>
-        <p class="kw-text-gray kw-mb-3">
+        <p class="kw-text-[#ffec9e] kw-mb-3">
           Type your <code>kw-</code> classes or click class chips to style the
           live component.
         </p>
@@ -519,7 +579,7 @@
       <div class="footer-shell">
         <div class="footer-about">
           <a href="./index.html" class="footer-brand">
-            <span class="footer-mark">&lt;/&gt;</span>
+            <img src="./kahwaCSS.png" alt="KahwaCSS logo" class="footer-logo" />
             <span>KahwaCSS</span>
           </a>
           <p>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>KahwaCSS | Components</title>
+    <link rel="icon" type="image/png" href="./kahwaCSS.png" />
     <link rel="stylesheet" href="./styles.css" />
 
     <script type="module">
@@ -39,10 +40,7 @@
         let ticking = false;
 
         const setOffset = () => {
-          document.documentElement.style.setProperty(
-            "--nav-offset",
-            "0px",
-          );
+          document.documentElement.style.setProperty("--nav-offset", "0px");
         };
 
         const closeMenu = () => {
@@ -170,7 +168,9 @@
       }
 
       function initCodeEditors() {
-        const editors = Array.from(document.querySelectorAll("textarea.play-editor"));
+        const editors = Array.from(
+          document.querySelectorAll("textarea.play-editor"),
+        );
         const refreshers = [];
 
         editors.forEach((textarea) => {
@@ -297,7 +297,9 @@
           </div>
 
           <div class="nav-right kw-flex kw-items-center kw-gap-3">
-            <a class="docs-btn" href="./index.html#playground">Try Playground</a>
+            <a class="docs-btn" href="./index.html#playground"
+              >Try Playground</a
+            >
           </div>
         </nav>
 
@@ -312,21 +314,39 @@
 
     <main class="site-shell components-main">
       <section class="panel kw-p-6 kw-mb-5" data-reveal>
-        <h1 class="section-title kw-mb-2">Component Gallery</h1>
-        <p class="kw-mb-2">
-          Every block below is styled using only <code>kw-*</code> utility
-          classes.
-        </p>
-        <p class="kw-mb-0">
-          Edit code in each panel to preview instantly, copy the snippet, or
-          reset to the original.
-        </p>
+        <h1 class="section-title kw-mb-3">Component Gallery</h1>
+        <ol class="component-hero-steps">
+          <li class="component-hero-step-item">
+            <div class="component-hero-step-content">
+              <p class="component-hero-step-title">Built 100% with <code>kw-*</code> utilities</p>
+              <p class="component-hero-step-text">
+                Every snippet is composed directly from KahwaCSS class tokens.
+              </p>
+            </div>
+          </li>
+          <li class="component-hero-step-item">
+            <div class="component-hero-step-content">
+              <p class="component-hero-step-title">Editable + live previewed</p>
+              <p class="component-hero-step-text">
+                Change markup in the editor and see updates instantly in the preview panel.
+              </p>
+            </div>
+          </li>
+          <li class="component-hero-step-item">
+            <div class="component-hero-step-content">
+              <p class="component-hero-step-title">Copy-ready component snippets</p>
+              <p class="component-hero-step-text">
+                Use <strong>Copy</strong> to grab code quickly and <strong>Reset</strong> to restore defaults.
+              </p>
+            </div>
+          </li>
+        </ol>
       </section>
 
       <section class="panel kw-p-5 kw-mb-5" data-component-lab data-reveal>
         <div class="component-lab-header">
-          <h2 class="section-title kw-mb-1">Button Styles</h2>
-          <p>Rounded, soft, dark, candy, and bordered button variants.</p>
+          <h2 class="section-title kw-mb-1">Button System</h2>
+          <p>Action-first button variants with solid, outline, accent, and playful styles.</p>
         </div>
 
         <div class="component-grid">
@@ -391,9 +411,9 @@
 
       <section class="panel kw-p-5 kw-mb-5" data-component-lab data-reveal>
         <div class="component-lab-header">
-          <h2 class="section-title kw-mb-1">Card Component</h2>
+          <h2 class="section-title kw-mb-1">Feature Card</h2>
           <p>
-            Bold highlighted content card inspired by your reference design.
+            Editorial-style content card for portfolio highlights, offers, and storytelling blocks.
           </p>
         </div>
 
@@ -413,9 +433,8 @@
                 data-role="editor"
                 rows="18"
               >
-<div class="kw-bg-[#ff4fa1] kw-p-5 kw-border-1 kw-border-color-black kw-shadow-md kw-max-w-[380px] kw-mx-auto">
-  <article class="kw-bg-[#f1e57f] kw-border-1 kw-border-color-black kw-shadow-md kw-min-h-[320px]">
-    <header class="kw-bg-[#efefef] kw-border-b-1 kw-border-color-black kw-px-3 kw-py-2">
+  <article class="kw-bg-[#ffec9e] kw-border-2 kw-border-color-black kw-shadow-md kw-max-w-[320px] kw-mx-auto">
+    <header class="kw-bg-[#efefef] kw-border-b-2 kw-border-color-black kw-px-3 kw-py-2">
       <h3 class="kw-text-2xl kw-bold kw-m-0">Web Development</h3>
     </header>
     <div class="kw-p-4">
@@ -423,14 +442,14 @@
         I craft modern, responsive front-end experiences using HTML, CSS, JavaScript, and React, with SEO best practices built in from the start.
       </p>
       <div class="kw-flex kw-gap-2 kw-flex-wrap">
-        <button class="kw-bg-[#ff4fa1] kw-text-black kw-px-4 kw-py-2 kw-border-1 kw-border-color-black kw-shadow-sm kw-bold">HTML</button>
-        <button class="kw-bg-[#ff4fa1] kw-text-black kw-px-4 kw-py-2 kw-border-1 kw-border-color-black kw-shadow-sm kw-bold">CSS</button>
-        <button class="kw-bg-[#ff4fa1] kw-text-black kw-px-4 kw-py-2 kw-border-1 kw-border-color-black kw-shadow-sm kw-bold">JS</button>
-        <button class="kw-bg-[#ff4fa1] kw-text-black kw-px-4 kw-py-2 kw-border-1 kw-border-color-black kw-shadow-sm kw-bold">React</button>
+        <button class="kw-bg-[#f5c7d9] kw-text-black kw-px-4 kw-py-2 kw-border-2 kw-border-color-black kw-shadow-sm kw-bold">HTML</button>
+        <button class="kw-bg-[#f5c7d9] kw-text-black kw-px-4 kw-py-2 kw-border-2 kw-border-color-black kw-shadow-sm kw-bold">CSS</button>
+        <button class="kw-bg-[#f5c7d9] kw-text-black kw-px-4 kw-py-2 kw-border-2 kw-border-color-black kw-shadow-sm kw-bold">JS</button>
+        <button class="kw-bg-[#f5c7d9] kw-text-black kw-px-4 kw-py-2 kw-border-2 kw-border-color-black kw-shadow-sm kw-bold">React</button>
       </div>
     </div>
   </article>
-</div></textarea
+</textarea
               >
               <div class="component-actions">
                 <button
@@ -458,7 +477,7 @@
                 <span></span>
                 <span></span>
                 <span></span>
-              </div> 
+              </div>
               <p>Preview</p>
             </div>
             <div class="play-panel-body preview-panel-body">
@@ -470,8 +489,8 @@
 
       <section class="panel kw-p-5 kw-mb-5" data-component-lab data-reveal>
         <div class="component-lab-header">
-          <h2 class="section-title kw-mb-1">Form Component</h2>
-          <p>Signup card layout matching your playful soft-shadow reference.</p>
+          <h2 class="section-title kw-mb-1">Signup Form</h2>
+          <p>Friendly onboarding form layout with social actions and a high-contrast CTA.</p>
         </div>
 
         <div class="component-grid">
@@ -548,8 +567,8 @@
 
       <section class="panel kw-p-5 kw-mb-5" data-component-lab data-reveal>
         <div class="component-lab-header">
-          <h2 class="section-title kw-mb-1">Navbar-3</h2>
-          <p>Three navbar styles based on the references you shared.</p>
+          <h2 class="section-title kw-mb-1">Navbar Variants</h2>
+          <p>Three distinct navigation patterns for docs, products, and creative brand pages.</p>
         </div>
 
         <div class="component-grid">
@@ -645,8 +664,8 @@
 
       <section class="panel kw-p-5 kw-mb-6" data-component-lab data-reveal>
         <div class="component-lab-header">
-          <h2 class="section-title kw-mb-1">Stats Cards</h2>
-          <p>Compact metric cards for dashboards and analytics.</p>
+          <h2 class="section-title kw-mb-1">Metrics Cards</h2>
+          <p>Compact analytics cards designed for dashboards, KPI strips, and quick reports.</p>
         </div>
 
         <div class="component-grid">
@@ -724,7 +743,7 @@
       <div class="footer-shell">
         <div class="footer-about">
           <a href="./index.html" class="footer-brand">
-            <span class="footer-mark">&lt;/&gt;</span>
+            <img src="./kahwaCSS.png" alt="KahwaCSS logo" class="footer-logo" />
             <span>KahwaCSS</span>
           </a>
           <p>
@@ -743,13 +762,28 @@
 
         <div class="footer-col">
           <p class="footer-title">Package</p>
-          <a href="https://www.npmjs.com/package/kahwacss" target="_blank" rel="noreferrer">npm</a>
-          <a href="https://cdn.jsdelivr.net/npm/kahwacss@latest/dist/kahwacss.cdn.min.js" target="_blank" rel="noreferrer">jsDelivr CDN</a>
+          <a
+            href="https://www.npmjs.com/package/kahwacss"
+            target="_blank"
+            rel="noreferrer"
+            >npm</a
+          >
+          <a
+            href="https://cdn.jsdelivr.net/npm/kahwacss@latest/dist/kahwacss.cdn.min.js"
+            target="_blank"
+            rel="noreferrer"
+            >jsDelivr CDN</a
+          >
         </div>
 
         <div class="footer-col">
           <p class="footer-title">Source</p>
-          <a href="https://github.com/search?q=kahwacss" target="_blank" rel="noreferrer">GitHub</a>
+          <a
+            href="https://github.com/search?q=kahwacss"
+            target="_blank"
+            rel="noreferrer"
+            >GitHub</a
+          >
         </div>
       </div>
 

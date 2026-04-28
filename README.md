@@ -96,15 +96,6 @@ Serve the folder over HTTP for testing:
 npx serve .
 ```
 
-### CDN usage
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/kahwacss@1.0.2/dist/kahwacss.cdn.min.js"></script>
-<script>
-  KahwaCSS.init();
-</script>
-```
-
 ### With config (npm)
 
 ```js

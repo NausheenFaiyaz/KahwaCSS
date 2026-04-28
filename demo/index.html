@@ -9,6 +9,7 @@
 
     <script type="module">
       import { initKahwaCSS } from "../src/index.js";
+      import { createCodeMirrorEditor } from "./codemirror-editor.js";
 
       initKahwaCSS();
 
@@ -40,74 +41,22 @@
         "kw-shadow-md",
       ];
 
-      function escapeHtml(value) {
-        return (value || "")
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;");
-      }
-
-      function highlightAttributes(fragment) {
-        return fragment.replace(
-          /([:@a-zA-Z0-9_-]+)(\s*=\s*)("[^"]*"|'[^']*')?/g,
-          (_match, name, equals, quoted) => {
-            if (quoted) {
-              return `<span class="tok-attr">${name}</span>${equals}<span class="tok-string">${quoted}</span>`;
-            }
-            return `<span class="tok-attr">${name}</span>`;
-          },
-        );
-      }
-
-      function getHighlightedMarkup(raw) {
-        const escaped = escapeHtml(raw || " ");
-        const withComments = escaped.replace(
-          /(&lt;!--[\s\S]*?--&gt;)/g,
-          '<span class="tok-comment">$1</span>',
-        );
-
-        return withComments.replace(
-          /(&lt;\/?)([a-zA-Z][\w:-]*)([\s\S]*?)(\/?&gt;)/g,
-          (_match, open, tag, attrs, close) =>
-            `${open}<span class="tok-tag">${tag}</span>${highlightAttributes(attrs)}${close}`,
-        );
-      }
-
       function initCodeEditors() {
         const editors = Array.from(document.querySelectorAll("textarea.play-editor"));
-        const refreshers = [];
+        const instances = [];
 
         editors.forEach((textarea) => {
-          if (textarea.dataset.syntaxEnhanced === "true") return;
-          textarea.dataset.syntaxEnhanced = "true";
           textarea.setAttribute("spellcheck", "false");
-
-          const wrapper = document.createElement("div");
-          wrapper.className = "kw-code-editor";
-          const pre = document.createElement("pre");
-          pre.className = "kw-code-highlight";
-          const code = document.createElement("code");
-          pre.appendChild(code);
-
-          const parent = textarea.parentNode;
-          parent.insertBefore(wrapper, textarea);
-          wrapper.appendChild(pre);
-          wrapper.appendChild(textarea);
-
-          const sync = () => {
-            code.innerHTML = getHighlightedMarkup(textarea.value || " ");
-            pre.scrollTop = textarea.scrollTop;
-            pre.scrollLeft = textarea.scrollLeft;
-          };
-
-          textarea.addEventListener("input", sync);
-          textarea.addEventListener("scroll", sync, { passive: true });
-          sync();
-          refreshers.push(sync);
+          textarea.setAttribute("autocapitalize", "off");
+          textarea.setAttribute("autocomplete", "off");
+          textarea.setAttribute("autocorrect", "off");
+          instances.push(createCodeMirrorEditor(textarea));
         });
 
         window.refreshCodeEditors = () => {
-          refreshers.forEach((refresh) => refresh());
+          instances.forEach((instance) =>
+            instance.refreshFromTextarea({ silent: true }),
+          );
         };
       }
 
@@ -197,8 +146,12 @@
               primary.setAttribute("class", current.join(" "));
             else primary.removeAttribute("class");
 
-            editor.value = template.innerHTML.trim();
-            updatePreview();
+            if (editor._codeMirror) {
+              editor._codeMirror.setValue(template.innerHTML.trim());
+            } else {
+              editor.value = template.innerHTML.trim();
+              updatePreview();
+            }
           });
         });
       }
@@ -317,9 +270,12 @@
         classInput.addEventListener("input", updatePreview);
 
         resetButton.addEventListener("click", () => {
-          classInput.value = defaultMarkup;
-          updatePreview();
-          window.refreshCodeEditors?.();
+          if (classInput._codeMirror) {
+            classInput._codeMirror.setValue(defaultMarkup);
+          } else {
+            classInput.value = defaultMarkup;
+            updatePreview();
+          }
         });
       });
     </script>
@@ -541,11 +497,11 @@
                 rows="9"
                 placeholder='<div class="kw-p-6 kw-bg-[#fff0c8]">Hello</div>'
               ></textarea>
-              <p class="editor-note kw-text-[#fff]">
+              <p class="editor-note kw-text-[#000]">
                 Write full HTML here (tags + text + classes). Chips apply to the
                 root element.
               </p>
-              <p class="kw-text-sm kw-mt-3">Root element classes</p>
+              <p class="kw-text-sm kw-mt-3 kw-text-[#000] kw-fw-600">Root element classes</p>
               <pre class="mirror"><code id="classMirror"></code></pre>
             </div>
           </article>

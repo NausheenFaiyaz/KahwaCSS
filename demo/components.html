@@ -9,6 +9,7 @@
 
     <script type="module">
       import { initKahwaCSS } from "../src/index.js";
+      import { createCodeMirrorEditor } from "./codemirror-editor.js";
 
       initKahwaCSS();
 
@@ -134,76 +135,24 @@
         });
       }
 
-      function escapeHtml(value) {
-        return (value || "")
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;");
-      }
-
-      function highlightAttributes(fragment) {
-        return fragment.replace(
-          /([:@a-zA-Z0-9_-]+)(\s*=\s*)("[^"]*"|'[^']*')?/g,
-          (_match, name, equals, quoted) => {
-            if (quoted) {
-              return `<span class="tok-attr">${name}</span>${equals}<span class="tok-string">${quoted}</span>`;
-            }
-            return `<span class="tok-attr">${name}</span>`;
-          },
-        );
-      }
-
-      function getHighlightedMarkup(raw) {
-        const escaped = escapeHtml(raw || " ");
-        const withComments = escaped.replace(
-          /(&lt;!--[\s\S]*?--&gt;)/g,
-          '<span class="tok-comment">$1</span>',
-        );
-
-        return withComments.replace(
-          /(&lt;\/?)([a-zA-Z][\w:-]*)([\s\S]*?)(\/?&gt;)/g,
-          (_match, open, tag, attrs, close) =>
-            `${open}<span class="tok-tag">${tag}</span>${highlightAttributes(attrs)}${close}`,
-        );
-      }
-
       function initCodeEditors() {
         const editors = Array.from(
           document.querySelectorAll("textarea.play-editor"),
         );
-        const refreshers = [];
+        const instances = [];
 
         editors.forEach((textarea) => {
-          if (textarea.dataset.syntaxEnhanced === "true") return;
-          textarea.dataset.syntaxEnhanced = "true";
           textarea.setAttribute("spellcheck", "false");
-
-          const wrapper = document.createElement("div");
-          wrapper.className = "kw-code-editor";
-          const pre = document.createElement("pre");
-          pre.className = "kw-code-highlight";
-          const code = document.createElement("code");
-          pre.appendChild(code);
-
-          const parent = textarea.parentNode;
-          parent.insertBefore(wrapper, textarea);
-          wrapper.appendChild(pre);
-          wrapper.appendChild(textarea);
-
-          const sync = () => {
-            code.innerHTML = getHighlightedMarkup(textarea.value || " ");
-            pre.scrollTop = textarea.scrollTop;
-            pre.scrollLeft = textarea.scrollLeft;
-          };
-
-          textarea.addEventListener("input", sync);
-          textarea.addEventListener("scroll", sync, { passive: true });
-          sync();
-          refreshers.push(sync);
+          textarea.setAttribute("autocapitalize", "off");
+          textarea.setAttribute("autocomplete", "off");
+          textarea.setAttribute("autocorrect", "off");
+          instances.push(createCodeMirrorEditor(textarea));
         });
 
         window.refreshCodeEditors = () => {
-          refreshers.forEach((refresh) => refresh());
+          instances.forEach((instance) =>
+            instance.refreshFromTextarea({ silent: true }),
+          );
         };
       }
 
@@ -240,9 +189,12 @@
           editor.addEventListener("input", renderPreview);
 
           reset.addEventListener("click", () => {
-            editor.value = defaultMarkup;
-            renderPreview();
-            window.refreshCodeEditors?.();
+            if (editor._codeMirror) {
+              editor._codeMirror.setValue(defaultMarkup);
+            } else {
+              editor.value = defaultMarkup;
+              renderPreview();
+            }
             setStatus("Reset to default.");
           });
 

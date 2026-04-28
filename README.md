@@ -49,20 +49,26 @@ At runtime this becomes inline styles (for example `padding`, `backgroundColor`,
 npm i kahwacss
 ```
 
-### CDN
+### CDN (jsDelivr)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/kahwacss@latest/dist/kahwacss.cdn.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/kahwacss@1.0.2/dist/kahwacss.cdn.min.js"></script>
 <script>
-  window.KahwaCSS.init();
+  KahwaCSS.init();
 </script>
+```
+
+You can also use unpkg:
+
+```html
+<script src="https://unpkg.com/kahwacss@1.0.2/dist/kahwacss.cdn.min.js"></script>
 ```
 
 ---
 
 ## Usage
 
-### ESM
+### npm (bundler/dev server)
 
 ```js
 import { initKahwaCSS } from "kahwacss";
@@ -70,7 +76,36 @@ import { initKahwaCSS } from "kahwacss";
 initKahwaCSS();
 ```
 
-### With config
+Use this form in apps powered by Vite, Webpack, Parcel, Next.js, etc.
+
+### npm (plain browser test without bundler)
+
+If you are testing in a raw HTML file, the browser cannot resolve `import ... from "kahwacss"` directly.
+Use the installed file path instead:
+
+```html
+<script type="module">
+  import initKahwaCSS from "./node_modules/kahwacss/dist/index.js";
+  initKahwaCSS();
+</script>
+```
+
+Serve the folder over HTTP for testing:
+
+```bash
+npx serve .
+```
+
+### CDN usage
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/kahwacss@1.0.2/dist/kahwacss.cdn.min.js"></script>
+<script>
+  KahwaCSS.init();
+</script>
+```
+
+### With config (npm)
 
 ```js
 import { initKahwaCSS } from "kahwacss";

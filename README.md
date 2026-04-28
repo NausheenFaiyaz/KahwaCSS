@@ -62,7 +62,7 @@ npm i kahwacss
 ### CDN (jsDelivr)
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/kahwacss@latest/dist/kahwacss.cdn.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/kahwacss@1.0.4/dist/kahwacss.cdn.min.js"></script>
 <script>
   KahwaCSS.init();
 </script>
@@ -71,7 +71,7 @@ npm i kahwacss
 You can also use unpkg:
 
 ```html
-<script src="https://unpkg.com/kahwacss@latest/dist/kahwacss.cdn.min.js"></script>
+<script src="https://unpkg.com/kahwacss@1.0.4/dist/kahwacss.cdn.min.js"></script>
 ```
 
 ---

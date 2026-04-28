@@ -23,6 +23,7 @@
     "clean": "node -e \"import('node:fs/promises').then(fs=>fs.rm('dist',{recursive:true,force:true}))\"",
     "build:esm": "esbuild src/index.js --bundle --format=esm --outfile=dist/index.js",
     "build:cdn": "esbuild src/cdn.js --bundle --format=iife --global-name=KahwaCSS --outfile=dist/kahwacss.cdn.js && esbuild src/cdn.js --bundle --format=iife --global-name=KahwaCSS --minify --outfile=dist/kahwacss.cdn.min.js",
+    "build:demo-editor": "esbuild demo/codemirror-editor.src.js --bundle --format=esm --outfile=demo/codemirror-editor.js",
     "build": "npm run clean && npm run build:esm && npm run build:cdn",
     "test": "node test/run-tests.js",
     "prepublishOnly": "npm run test && npm run build"
@@ -38,5 +39,9 @@
   "license": "MIT",
   "devDependencies": {
     "esbuild": "^0.25.4"
+  },
+  "dependencies": {
+    "@codemirror/lang-html": "^6.4.11",
+    "codemirror": "^6.0.2"
   }
 }

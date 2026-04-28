@@ -125,7 +125,7 @@ main section[id] {
   text-decoration: none;
   color: #101010;
   font-weight: 800;
-  border: 1px solid #171717;
+  border: 2px solid #171717;
   border-radius: 999px;
   padding: 14px 24px;
   background: #fff;
@@ -140,7 +140,7 @@ main section[id] {
   width: 15px;
   height: 15px;
   border-radius: 50%;
-  border: 1px solid #202020;
+  border: 2px solid #202020;
   background: var(--pink);
 }
 
@@ -292,7 +292,7 @@ li {
   width: 15px;
   height: 15px;
   border-radius: 50%;
-  border: 1px solid #202020;
+  border: 2px solid #202020;
   background: #ffd2df;
 }
 
@@ -308,17 +308,23 @@ li {
 
 .ticker {
   overflow: hidden;
-  white-space: nowrap;
   border: 1px solid #111;
   background: #d8ffc4;
 }
 
 .ticker-track {
-  display: inline-block;
-  padding: 14px 14px;
+  display: flex;
+  width: max-content;
   animation: ticker 16s linear infinite;
   font-weight: 600;
   font-size: 1.3rem;
+  will-change: transform;
+}
+
+.ticker-segment {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  padding: 14px 18px;
 }
 
 .nav-toggle {
@@ -1263,14 +1269,16 @@ pre code,
 }
 
 .docs-table-soft thead th {
-  background: #e9e4cf;
-  font-size: 0.86rem;
+  background: var(--accent);
+  font-size: 1rem;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .docs-table-soft tbody td {
   font-size: 0.93rem;
+  font-weight: 600;
 }
 
 .docs-table-soft tbody tr.tone-a td {

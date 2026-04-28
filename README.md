@@ -12,6 +12,7 @@ It is designed for:
 
 ## Table of Contents
 
+- [Project Links](#project-links)
 - [What It Is](#what-it-is)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -24,6 +25,15 @@ It is designed for:
 - [Current Constraints](#current-constraints)
 - [Development](#development)
 - [License](#license)
+
+---
+
+## Project Links
+
+- **Live Demo (Hosted):** [https://kahwa-css.vercel.app/]
+- **Demo Video:** [https://www.youtube.com/watch?v=5OnFs72oE98]
+- **Twitter (X) Post:** [https://x.com/codeXninjaDev/status/2049124232349757705]
+- **LinkedIn Post:** [https://www.linkedin.com/feed/update/urn:li:activity:7454892854771884032/]
 
 ---
 

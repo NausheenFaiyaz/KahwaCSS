@@ -1,6 +1,6 @@
 {
   "name": "kahwacss",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "KahwaCSS is a lightweight utility-first CSS engine powered by kw-* classes and JavaScript.",
   "type": "module",
   "main": "./dist/index.js",

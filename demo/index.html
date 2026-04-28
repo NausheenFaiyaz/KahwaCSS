@@ -7,11 +7,11 @@
     <link rel="icon" type="image/png" href="./kahwaCSS.png" />
     <link rel="stylesheet" href="./styles.css" />
 
+    <script src="https://cdn.jsdelivr.net/npm/kahwacss@1.0.2/dist/kahwacss.cdn.min.js"></script>
     <script type="module">
-      import { initKahwaCSS } from "../src/index.js";
       import { createCodeMirrorEditor } from "./codemirror-editor.js";
 
-      initKahwaCSS();
+      KahwaCSS.init();
 
       const defaultMarkup = `<div class="kw-bg-[#fff0c8] kw-text-[#000] kw-p-6 kw-rounded-2xl kw-shadow-md kw-text-center kw-border-1 kw-border-color-black">
   <h3 class="kw-text-xl kw-bold kw-mb-2">Hello, Kahwa</h3>

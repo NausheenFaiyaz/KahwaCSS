@@ -7,11 +7,11 @@
     <link rel="icon" type="image/png" href="./kahwaCSS.png" />
     <link rel="stylesheet" href="./styles.css" />
 
+    <script src="https://cdn.jsdelivr.net/npm/kahwacss@1.0.2/dist/kahwacss.cdn.min.js"></script>
     <script type="module">
-      import { initKahwaCSS } from "../src/index.js";
       import { createCodeMirrorEditor } from "./codemirror-editor.js";
 
-      initKahwaCSS();
+      KahwaCSS.init();
 
       function initReveal() {
         const observer = new IntersectionObserver(

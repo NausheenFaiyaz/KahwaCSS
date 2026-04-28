@@ -7,11 +7,12 @@
     <link rel="icon" type="image/png" href="./kahwaCSS.png" />
     <link rel="stylesheet" href="./styles.css" />
 
-    <script src="https://cdn.jsdelivr.net/npm/kahwacss@latest/dist/kahwacss.cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/kahwacss@1.0.2/dist/kahwacss.cdn.min.js"></script>
+    <script>
+      KahwaCSS.init();
+    </script>
     <script type="module">
       import { createCodeMirrorEditor } from "./codemirror-editor.js";
-
-      window.KahwaCSS.init();
 
       const defaultMarkup = `<div class="kw-bg-[#fff0c8] kw-text-[#000] kw-p-6 kw-rounded-2xl kw-shadow-md kw-text-center kw-border-1 kw-border-color-black">
   <h3 class="kw-text-xl kw-bold kw-mb-2">Hello, Kahwa</h3>
@@ -561,7 +562,7 @@
         <div class="footer-col">
           <p class="footer-title">Package</p>
           <a href="https://www.npmjs.com/package/kahwacss" target="_blank" rel="noreferrer">npm</a>
-          <a href="https://cdn.jsdelivr.net/npm/kahwacss@latest/dist/kahwacss.cdn.min.js" target="_blank" rel="noreferrer">jsDelivr CDN</a>
+          <a href="https://cdn.jsdelivr.net/npm/kahwacss@1.0.2/dist/kahwacss.cdn.min.js" target="_blank" rel="noreferrer">jsDelivr CDN</a>
         </div>
 
         <div class="footer-col">

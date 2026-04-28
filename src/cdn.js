@@ -1,10 +1,6 @@
 import initKahwaCSS from "./index.js";
 
-if (typeof window !== "undefined") {
-  window.KahwaCSS = {
-    init: initKahwaCSS,
-    initKahwaCSS,
-  };
-}
+export const init = initKahwaCSS;
+export { initKahwaCSS };
 
 export default initKahwaCSS;
